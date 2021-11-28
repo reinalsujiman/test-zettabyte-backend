@@ -1,4 +1,4 @@
-module.exports = mongoose => {
+module.exports = (mongoose,mongoosePaginate) => {
   var schema = mongoose.Schema(
     {
       article_name: String,
@@ -12,7 +12,8 @@ module.exports = mongoose => {
     return object;
   });
 
-  const Article = mongoose.model("article", schema);
+  schema.plugin(mongoosePaginate);
 
+  const Article = mongoose.model("article", schema);
   return Article;
 };

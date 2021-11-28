@@ -1,6 +1,13 @@
 const db = require("../models");
 const Articles = db.article;
 
+const getPagination = (page, size) => {
+  const limit = size ? +size : 3;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
 // Create and Save a new Article
 exports.create = (req, res) => {
   // Validate request
@@ -42,6 +49,32 @@ exports.findAll = (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving Articles."
+      });
+    });
+};
+
+// Find all with pagination
+exports.findAllWithPagination = (req, res) => {
+  const { page, size, title } = req.query;
+  var condition = title
+    ? { title: { $regex: new RegExp(title), $options: "i" } }
+    : {};
+
+  const { limit, offset } = getPagination(page, size);
+
+  Articles.paginate(condition, { offset, limit })
+    .then((data) => {
+      res.send({
+        totalItems: data.totalDocs,
+        tutorials: data.docs,
+        totalPages: data.totalPages,
+        currentPage: data.page - 1,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials.",
       });
     });
 };

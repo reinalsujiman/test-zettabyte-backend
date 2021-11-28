@@ -8,6 +8,9 @@ module.exports = app => {
   
     // Retrieve all Tutorials
     router.get("/", article.findAll);
+
+    // Retrieve all Tutorials with Pagination
+    router.get("/pagination", article.findAllWithPagination);
   
     // Retrieve a single Tutorial with id
     router.get("/:id", article.findOne);
